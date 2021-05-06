@@ -1,0 +1,4 @@
+name: ImmuneCutter
+version: @version@
+main: com.teamyomi.immunecutter.ImmuneCutter
+api-version: 1.16
