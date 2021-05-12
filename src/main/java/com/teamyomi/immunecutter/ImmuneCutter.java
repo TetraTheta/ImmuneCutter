@@ -3,7 +3,6 @@ package com.teamyomi.immunecutter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
@@ -29,17 +28,16 @@ public final class ImmuneCutter extends JavaPlugin implements Listener {
     public void onStoneCutterDamage(EntityDamageEvent e) {
         if (e.getCause().equals(EntityDamageEvent.DamageCause.CONTACT) && e.getEntity().isOnGround() && checkList(e.getEntity().getType())) {
             Location loc = e.getEntity().getLocation().clone().subtract(0, 0.35, 0);
-            Block b = loc.getBlock();
+            var b = loc.getBlock();
             if (b.getType().equals(Material.STONECUTTER)) {
                 e.setCancelled(true);
             }
         }
     }
 
-    public boolean checkList(EntityType e) {
+    private boolean checkList(EntityType e) {
         String s = "stonecutter-damage." + e.toString();
-        if (getConfig().getBoolean(s)) { return false; }
-        return true;
+        return !getConfig().getBoolean(s);
     }
 
     private void generateDefaultConfiguration() {
@@ -47,7 +45,8 @@ public final class ImmuneCutter extends JavaPlugin implements Listener {
         config.options().header("Change true to false if you want that type of entity immune to stonecutter!");
         for (EntityType e : EntityType.values()) {
             if (!e.isAlive()) { continue; }
-            String path = "stonecutter-damage." + e.toString();
+            //noinspection UnnecessaryToStringCall
+            String path = "stonecutter-damage." + e.toString(); // .toString() is necessary! fuck you IDE
             if (!config.contains(path)) {
                 config.set(path, true);
             }
